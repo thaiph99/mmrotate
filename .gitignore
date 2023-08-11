@@ -124,3 +124,6 @@ tmp
 
 # custom
 mmrotate/.mim
+
+# ignore for rtmdet workdir
+rotated_rtmdet_l_3x_*/
