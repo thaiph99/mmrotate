@@ -127,3 +127,7 @@ mmrotate/.mim
 
 # ignore for rtmdet workdir
 rotated_rtmdet_l_3x_*/
+
+# video
+*.mp4
+*.avi
