@@ -25,10 +25,11 @@ class DOTADataset(BaseDataset):
 
     METAINFO = {
         'classes':
-        ('plane', 'baseball-diamond', 'bridge', 'ground-track-field',
-         'small-vehicle', 'large-vehicle', 'ship', 'tennis-court',
-         'basketball-court', 'storage-tank', 'soccer-ball-field', 'roundabout',
-         'harbor', 'swimming-pool', 'helicopter'),
+        # ('plane', 'baseball-diamond', 'bridge', 'ground-track-field',
+        #  'small-vehicle', 'large-vehicle', 'ship', 'tennis-court',
+        #  'basketball-court', 'storage-tank', 'soccer-ball-field', 'roundabout',
+        #  'harbor', 'swimming-pool', 'helicopter'),
+         ("paper", "metal", "plastic", "nilon", "glass", "fabric"),
         # palette is a list of color tuples, which is used for visualization.
         'palette': [(165, 42, 42), (189, 183, 107), (0, 255, 0), (255, 0, 0),
                     (138, 43, 226), (255, 128, 0), (255, 0, 255),
@@ -39,7 +40,7 @@ class DOTADataset(BaseDataset):
 
     def __init__(self,
                  diff_thr: int = 100,
-                 img_suffix: str = 'png',
+                 img_suffix: str = 'jpg',
                  **kwargs) -> None:
         self.diff_thr = diff_thr
         self.img_suffix = img_suffix
@@ -92,6 +93,8 @@ class DOTADataset(BaseDataset):
                         bbox_info = si.split()
                         instance['bbox'] = [float(i) for i in bbox_info[:8]]
                         cls_name = bbox_info[8]
+                        class_name = ["paper", "metal", "plastic", "nilon", "glass", "fabric"]
+                        cls_name = class_name[int(cls_name)]
                         instance['bbox_label'] = cls_map[cls_name]
                         difficulty = int(bbox_info[9])
                         if difficulty > self.diff_thr:
