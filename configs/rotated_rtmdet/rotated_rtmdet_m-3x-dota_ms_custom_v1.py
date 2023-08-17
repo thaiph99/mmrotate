@@ -23,3 +23,5 @@ model = dict(
 
 # batch_size = (1 GPUs) x (8 samples per GPU) = 8
 train_dataloader = dict(batch_size=4, num_workers=8)
+
+work_dir = "./rotated_rtmdet_m_3x_v1"
