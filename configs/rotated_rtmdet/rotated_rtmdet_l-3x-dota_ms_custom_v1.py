@@ -7,7 +7,7 @@ checkpoint = 'https://download.openmmlab.com/mmdetection/v3.0/rtmdet/cspnext_rsb
 
 visualizer = dict(vis_backends=[dict(type='LocalVisBackend'), dict(type='WandbVisBackend')])
 
-data_root = "/home/thaipham/horus/data/oriented_bbox_labels/images1"
+data_root = "../data/oriented_bbox_labels/images1"
 
 angle_version = 'le90'
 model = dict(
@@ -121,7 +121,7 @@ val_dataloader = dict(
 
 test_dataloader = dict(
     dataset=dict(
-        data_root="/home/thaipham/horus/data/oriented_bbox_labels/images2",
+        data_root="../data/oriented_bbox_labels/images2",
         ann_file='annfiles/',
         data_prefix=dict(img_path='images/'),
         test_mode=True
