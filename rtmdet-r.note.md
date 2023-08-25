@@ -1,4 +1,54 @@
 
+# Setup Environment
+
+## 1.x branch
+
+```bash
+conda create --name mmrotate1x python=3.8 -y
+conda activate mmrotate1x
+
+conda install pytorch==1.8.0 torchvision==0.9.0 cudatoolkit=10.2 -c pytorch
+
+pip install -U openmim
+mim install mmengine
+mim install "mmcv>=2.0.0rc2"
+
+mim install 'mmdet>=3.0.0rc2'
+
+cd mmrotate
+pip install -v -e .
+```
+
+## Verification installation
+
+```bash
+mim download mmrotate --config oriented-rcnn-le90_r50_fpn_1x_dota --dest .
+
+python demo/image_demo.py demo/demo.jpg oriented-rcnn-le90_r50_fpn_1x_dota.py \
+oriented_rcnn_r50_fpn_1x_dota_le90-6d2b2ce0.pth --out-file result.jpg
+```
+
+## Packages version
+
+```bash
+# check version
+conda list | grep '^mm\|torch\|cuda' 
+```
+
+### 1.x branch
+
+```bash
+cudatoolkit               10.2.89              hfd86e86_1  
+ffmpeg                    4.3                  hf484d3e_0    pytorch
+mmcv                      2.0.1                    pypi_0    pypi
+mmdet                     3.1.0                    pypi_0    pypi
+mmengine                  0.8.3                    pypi_0    pypi
+mmrotate                  1.0.0rc1                  dev_0    <develop>
+pytorch                   1.8.0           py3.8_cuda10.2_cudnn7.6.5_0    pytorch
+torchvision               0.9.0                py38_cu102    pytorch
+
+```
+
 # Train
 
 ```bash
