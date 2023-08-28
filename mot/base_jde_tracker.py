@@ -88,6 +88,9 @@ class STrack(BaseTrack):
     def __init__(self, tlwh, score, cls_id, buff_size=30, temp_feat=None):
         # wait activate
         self._tlwh = np.asarray(tlwh, dtype=np.float32)
+
+        # save origin detection
+        self.det = np.array([])
         self.score = score
         self.cls_id = cls_id
         self.track_len = 0

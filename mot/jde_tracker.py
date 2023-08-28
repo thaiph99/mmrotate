@@ -197,6 +197,9 @@ class JDETracker(object):
                 # i_tracked is the id of the track and idet is the detection
                 track = track_pool_dict[cls_id][i_tracked]
                 det = detections[idet]
+
+                # add detection to track for getting original detection
+                track.det = np.asarray(det._tlwh, dtype=np.float32)
                 if track.state == TrackState.Tracked:
                     # If the track is active, add the detection to the track
                     track.update(detections[idet], self.frame_id)
