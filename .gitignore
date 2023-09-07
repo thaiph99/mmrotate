@@ -132,3 +132,6 @@ rotated_rtmdet_m_3x_*/
 # video
 *.mp4
 *.avi
+*.t7
+
+socket/80*
