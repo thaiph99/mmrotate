@@ -1,7 +1,7 @@
 
 # Setup Environment
 
-## 1.x branch
+## Install require packages 1.x branch
 
 ```bash
 conda create --name mmrotate1x python=3.8 -y
