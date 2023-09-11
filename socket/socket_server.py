@@ -201,13 +201,10 @@ class ServerSocket:
         bboxes = result.pred_instances.bboxes.cpu().numpy()
         pred_scores = result.pred_instances.scores.cpu().numpy()
         labels = result.pred_instances.labels.cpu().numpy()
-
-        confidence_threshold = 0.55
+        confidence_threshold = 0.65
         pi = 22/7
         filtered_indices = np.where(pred_scores > confidence_threshold)[0]
-
         frame_detections = []
-
         vision_results = []
 
         for idx in filtered_indices:
@@ -229,21 +226,15 @@ class ServerSocket:
 
         for i, idx in enumerate(filtered_indices):
             bbox = bboxes[idx]
-
             # draw bbox
             xc, yc, width, height, radian = bbox
             degrees = radian * (180/pi)
             points = cv2.boxPoints(([xc, yc], (width, height), degrees))
-
             pts = np.array(points).reshape((1, -1, 1, 2)).astype(np.int32)
-
             cv2.polylines(frame, pts, True, (0, 255, 0), 2)
 
             # draw class
             label = labels_name[labels[idx]]
-            text_size, baseline = cv2.getTextSize(
-                label, font_face, font_scale, font_thickness
-            )
             point_text_orig = pts[0, 1, :] + text_offset
 
             frame = cv2.putText(frame, label,
@@ -257,11 +248,7 @@ class ServerSocket:
             text = f"#{obj_id}"
             vision_results.append([xc, yc, width, height, degrees, obj_id])
 
-            text_size, baseline = cv2.getTextSize(
-                text, font_face, font_scale, font_thickness
-            )
             point_text_orig = pts[0, 0, :] + text_offset
-
             frame = cv2.putText(frame, text,
                                 point_text_orig.ravel(),
                                 font_face, font_scale,
@@ -277,10 +264,7 @@ class ServerSocket:
 def main(TCP_IP, TCP_PORT):
     # TCP_IP = '0.0.0.0'
     # TCP_PORT = 8080
-    # while True:
     server = ServerSocket(TCP_IP, TCP_PORT)
-    # cmd = 'kill -9 $(lsof -t -i:8080)'
-    # os.system(cmd)
 
 
 if __name__ == "__main__":
