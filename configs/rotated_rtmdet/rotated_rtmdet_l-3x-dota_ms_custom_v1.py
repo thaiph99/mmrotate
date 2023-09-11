@@ -77,19 +77,12 @@ model = dict(
         min_bbox_size=0,
         score_thr=0.05,
         nms=dict(type='nms_rotated', iou_threshold=0.1),
-        max_per_img=2000),
-)
+        max_per_img=2000),)
 
 # batch_size = (2 GPUs) x (4 samples per GPU) = 8
 train_dataloader = dict(batch_size=2, num_workers=8)
 
-test_dataloader = dict(
-    dataset=dict(
-        data_root="",
-        ann_file='annfiles/',
-        data_prefix=dict(img_path='images/'),
-        test_mode=True))
-
+metainfo = dict(classes=("paper", "metal", "plastic", "nilon", "glass", "fabric"))
 train_dataloader = dict(
     batch_size=2,
     num_workers=4,
@@ -99,12 +92,12 @@ train_dataloader = dict(
     pin_memory=False,
     dataset=dict(
         data_root=data_root,
+        metainfo=metainfo,
         # ann_file='trainval/annfiles/',
         ann_file='annfiles/',
         data_prefix=dict(img_path='images/'),
-        filter_cfg=dict(filter_empty_gt=True)
-    )
-)
+        filter_cfg=dict(filter_empty_gt=True)))
+
 val_dataloader = dict(
     batch_size=1,
     num_workers=2,
@@ -113,20 +106,18 @@ val_dataloader = dict(
     sampler=dict(type='DefaultSampler', shuffle=False),
     dataset=dict(
         data_root=data_root,
+        metainfo=metainfo,
         ann_file='annfiles/',
         data_prefix=dict(img_path='images/'),
-        test_mode=True
-    )
-)
+        test_mode=True))
 
 test_dataloader = dict(
     dataset=dict(
         data_root="../data/oriented_bbox_labels/images2",
         ann_file='annfiles/',
+        metainfo=metainfo,
         data_prefix=dict(img_path='images/'),
-        test_mode=True
-    )
-)
+        test_mode=True))
 
 val_evaluator = dict(type='DOTAMetric', metric='mAP')
 test_evaluator = val_evaluator
