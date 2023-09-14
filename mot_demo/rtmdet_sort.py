@@ -39,11 +39,11 @@ print(get_compiler_version())
 # config = 'oriented_rcnn_r50_fpn_1x_dota_le90.py'
 # config = "../configs/rotated_rtmdet/rotated_rtmdet_l-3x-dota_ms_custom_v2.py"
 # config = "../configs/rotated_rtmdet/rotated_rtmdet_m-3x-dota_ms_custom_v1.py"
-config = "../rotated_rtmdet_l_3x_v4/rotated_rtmdet_l-3x-dota_ms_custom_v4.py"
+config = "rotated_rtmdet_l_3x_v4/rotated_rtmdet_l-3x-dota_ms_custom_v4.py"
 # Setup a checkpoint file to load
 # checkpoint = 'oriented_rcnn_r50_fpn_1x_dota_le90-6d2b2ce0.pth'
 # checkpoint = "../rotated_rtmdet_m_3x_v1/epoch_96.pth"
-checkpoint = "../rotated_rtmdet_l_3x_v4/epoch_96.pth"
+checkpoint = "rotated_rtmdet_l_3x_v4/epoch_96.pth"
 
 # Set the device to be used for evaluation
 device = 'cuda:0'
@@ -73,8 +73,8 @@ tracker = Sort(
 )
 
 
-cap = cv2.VideoCapture('/home/thaipham/Videos/2023-07-24-094422.webm')
-# cap = cv2.VideoCapture(0)
+video_path = "/home/thaiph/data/640x_240723/2023-07-24-094422.webm"
+cap = cv2.VideoCapture(video_path)
 
 frame_width = int(cap.get(3))
 frame_height = int(cap.get(4))
