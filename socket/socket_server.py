@@ -243,10 +243,13 @@ class ServerSocket:
                                 font_color, font_thickness,
                                 cv2.LINE_8,)
 
+            pred_score = pred_scores[idx]
+            class_idx = labels[idx]
             obj = res[i]
             obj_id = obj.id
             text = f"#{obj_id}"
-            vision_results.append([xc, yc, width, height, degrees, obj_id])
+            vision_results.append([xc, yc, width, height, degrees, obj_id, class_idx, pred_score])
+            class_name = labels_name[class_idx]
 
             point_text_orig = pts[0, 0, :] + text_offset
             frame = cv2.putText(frame, text,
