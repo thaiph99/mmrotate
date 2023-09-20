@@ -234,7 +234,8 @@ class ServerSocket:
             cv2.polylines(frame, pts, True, (0, 255, 0), 2)
 
             # draw class
-            label = labels_name[labels[idx]]
+            label_index = labels[idx]
+            label = labels_name[label_index]
             point_text_orig = pts[0, 1, :] + text_offset
 
             frame = cv2.putText(frame, label,
@@ -244,12 +245,15 @@ class ServerSocket:
                                 cv2.LINE_8,)
 
             pred_score = pred_scores[idx]
-            class_idx = labels[idx]
             obj = res[i]
             obj_id = obj.id
             text = f"#{obj_id}"
-            vision_results.append([xc, yc, width, height, degrees, obj_id, class_idx, pred_score])
-            class_name = labels_name[class_idx]
+
+            # Accept conditions
+            (dy, dx) = frame.shape
+            if ((3 * dx/4 > xc > dx/4) and (3 * dy/4 > yc > dx/4) and label in ['plastic', 'paper']):
+                vision_results.append([xc, yc, width, height, degrees,
+                                       obj_id, label_index, pred_score])
 
             point_text_orig = pts[0, 0, :] + text_offset
             frame = cv2.putText(frame, text,
