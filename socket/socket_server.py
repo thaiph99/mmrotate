@@ -74,17 +74,6 @@ class ServerSocket:
 
         try:
             while True:
-                if (cnt < 10):
-                    cnt_str = '000' + str(cnt)
-                elif (cnt < 100):
-                    cnt_str = '00' + str(cnt)
-                elif (cnt < 1000):
-                    cnt_str = '0' + str(cnt)
-                else:
-                    cnt_str = str(cnt)
-                if cnt == 0:
-                    startTime = time.localtime()
-                cnt += 1
 
                 length = self.recvall(self.conn, 64)
                 if not length:
@@ -114,26 +103,9 @@ class ServerSocket:
 
                 cv2.imwrite('./' + str(self.TCP_PORT) + '_images' +
                             str(self.folder_num) + '/img' + cnt_str + '.jpg', new_img)
-                # cv2.waitKey(1)
-                # if (cnt == 60 * 10):
-                #     # for multi processing
-                #     cnt = 0
-                #     convertThread = threading.Thread(target=self.convertImage(str(self.folder_num), 600, startTime))
-                #     convertThread.start()
-                #     self.folder_num = (self.folder_num + 1) % 2
-
-                ####################
-                # code robot in here
-                ####################
 
         except Exception as e:
             print(e)
-            # self.convertImage(str(self.folder_num), cnt, startTime)
-            # self.socketClose()
-            # cv2.destroyAllWindows()
-            # self.socketOpen()
-            # self.receiveThread = threading.Thread(target=self.receiveImages)
-            # self.receiveThread.start()
 
     def createImageDir(self):
 
@@ -155,44 +127,6 @@ class ServerSocket:
             buf += newbuf
             count -= len(newbuf)
         return buf
-
-    def convertImage(self, fnum, count, now):
-        img_array = []
-        cnt = 0
-        for filename in glob.glob('./' + str(self.TCP_PORT) + '_images' + fnum + '/*.jpg'):
-            if (cnt == count):
-                break
-            cnt = cnt + 1
-            img = cv2.imread(filename)
-            height, width, layers = img.shape
-            size = (width, height)
-            img_array.append(img)
-
-        file_date = self.getDate(now)
-        file_time = self.getTime(now)
-        name = 'video(' + file_date + ' ' + file_time + ').mp4'
-        file_path = './videos/' + name
-        out = cv2.VideoWriter(file_path, cv2.VideoWriter_fourcc(*'.mp4'), 20, size)
-
-        for i in range(len(img_array)):
-            out.write(img_array[i])
-        out.release()
-        print(u'complete')
-
-    def getDate(self, now):
-        year = str(now.tm_year)
-        month = str(now.tm_mon)
-        day = str(now.tm_mday)
-
-        if len(month) == 1:
-            month = '0' + month
-        if len(day) == 1:
-            day = '0' + day
-        return (year + '-' + month + '-' + day)
-
-    def getTime(self, now):
-        file_time = (str(now.tm_hour) + '_' + str(now.tm_min) + '_' + str(now.tm_sec))
-        return file_time
 
     def handle_input(self, frame):
 
