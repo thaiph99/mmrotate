@@ -9,6 +9,7 @@ import sys
 import time
 import threading
 from datetime import datetime
+import math
 
 from similari import Universal2DBox, Sort, SpatioTemporalConstraints, PositionalMetricType, BoundingBox
 from mmdet.apis import inference_detector, init_detector
@@ -27,6 +28,7 @@ font_color = (255, 255, 255)
 text_offset = np.array([0, -10]).reshape((1, 1, -1)).astype(np.int32)
 
 labels_name = ("paper", "metal", "plastic", "nilon", "glass", "fabric")
+pi = 22/7
 
 constraints = SpatioTemporalConstraints()
 constraints.add_constraints([(1, 1.0)])
@@ -69,12 +71,12 @@ class ServerSocket:
               str(self.TCP_PORT) + ' ] is connected with client')
 
     def receiveImages(self):
-        cnt_str = ''
         cnt = 0
-
         try:
             while True:
-
+                if cnt > 100:
+                    cnt = 0
+                cnt += 1
                 length = self.recvall(self.conn, 64)
                 if not length:
                     print("End processing")
@@ -100,9 +102,11 @@ class ServerSocket:
                 self.conn.sendall(length.encode('utf-8').ljust(64))
                 self.conn.send(stringData)
                 self.conn.send(base64.b64encode(np.array(vision_resutls.shape)).ljust(64))
+                print("send done")
+                print("================================================================")
 
                 cv2.imwrite('./' + str(self.TCP_PORT) + '_images' +
-                            str(self.folder_num) + '/img' + cnt_str + '.jpg', new_img)
+                            str(self.folder_num) + '/img' + str(cnt) + '.jpg', new_img)
 
         except Exception as e:
             print(e)
@@ -136,7 +140,6 @@ class ServerSocket:
         pred_scores = result.pred_instances.scores.cpu().numpy()
         labels = result.pred_instances.labels.cpu().numpy()
         confidence_threshold = 0.65
-        pi = 22/7
         filtered_indices = np.where(pred_scores > confidence_threshold)[0]
         frame_detections = []
         vision_results = []
@@ -162,14 +165,14 @@ class ServerSocket:
             bbox = bboxes[idx]
             # draw bbox
             xc, yc, width, height, radian = bbox
-            degrees = radian * (180/pi)
-            points = cv2.boxPoints(([xc, yc], (width, height), degrees))
+            degree = radian * (180/pi)
+            points = cv2.boxPoints(([xc, yc], (width, height), degree))
             pts = np.array(points).reshape((1, -1, 1, 2)).astype(np.int32)
             cv2.polylines(frame, pts, True, (0, 255, 0), 2)
 
             # draw class
-            label_index = labels[idx]
-            label = labels_name[label_index]
+            label_id = labels[idx]
+            label = labels_name[label_id]
             point_text_orig = pts[0, 1, :] + text_offset
 
             frame = cv2.putText(frame, label,
@@ -181,15 +184,26 @@ class ServerSocket:
             pred_score = pred_scores[idx]
             obj = res[i]
             obj_id = obj.id
-            text = f"#{obj_id}"
+            if width <= height:
+                p1, p2 = points[0], points[1]
+            else:
+                p1, p2 = points[0], points[3]
 
             # Accept conditions
-            (dy, dx) = frame.shape
-            if ((3 * dx/4 > xc > dx/4) and (3 * dy/4 > yc > dx/4) and label in ['plastic', 'paper']):
-                vision_results.append([xc, yc, width, height, degrees,
-                                       obj_id, label_index, pred_score])
+            angle = 0
+            (dy, dx) = frame.shape[1], frame.shape[0]
+            if ((3 * dy/4 > yc > dx/4) and label in ['plastic', 'paper']):
+
+                angle = get_angle(p2, p1, (p1[0] + 50, p1[1]))
+                angle = convert_angle(angle)
+                vision_results.append([xc, yc, width, height, angle,
+                                       obj_id, label_id, pred_score])
+
+            text = '{:.2f}*'.format(angle)
+            # text = f"#{obj_id}"
 
             point_text_orig = pts[0, 0, :] + text_offset
+
             frame = cv2.putText(frame, text,
                                 point_text_orig.ravel(),
                                 font_face, font_scale,
@@ -197,9 +211,22 @@ class ServerSocket:
                                 cv2.LINE_4,)
 
         vision_results = np.array(vision_results)
-        print("================================================================")
         print(vision_results.shape)
         return frame, vision_results
+
+
+def convert_angle(a):
+    if 270 >= a > 90:
+        return a - 180
+    elif 360 >= a > 270:
+        return a - 360
+    else:
+        return a
+
+
+def get_angle(a, b, c):
+    ang = math.degrees(math.atan2(c[1]-b[1], c[0]-b[0]) - math.atan2(a[1]-b[1], a[0]-b[0]))
+    return ang + 360 if ang < 0 else ang
 
 
 def main(TCP_IP, TCP_PORT):

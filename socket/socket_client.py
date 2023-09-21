@@ -34,7 +34,7 @@ class ClientSocket:
 
     def sendImages(self):
         cnt = 0
-        capture = cv2.VideoCapture('/home/thaipham/Videos/output2.avi')
+        capture = cv2.VideoCapture('/home/thaiph/data/1280x_240723/output2.avi')
         # capture.set(cv2.CAP_PROP_FRAME_WIDTH, 480)
         # capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 315)
         try:
@@ -78,7 +78,7 @@ class ClientSocket:
                 vision_result_per_frame = np.frombuffer(base64.b64decode(stringData), np.float64)
                 vision_result_per_frame = vision_result_per_frame.reshape(res_shape)
 
-                (xc, yc, width, height, degrees, obj_id) = vision_result_per_frame[0]
+                (xc, yc, width, height, degrees, obj_id, label_idex, pred_score) = vision_result_per_frame[0]
                 points = cv2.boxPoints(([xc, yc], (width, height), degrees))
                 pts = np.array(points).reshape((1, -1, 1, 2)).astype(np.int32)
                 cv2.polylines(frame, pts, True, (0, 255, 0), 2)
