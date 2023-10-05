@@ -19,7 +19,7 @@ cd mmrotate
 pip install -v -e .
 ```
 
-## Verification installation
+## Verify installation
 
 ```bash
 mim download mmrotate --config oriented-rcnn-le90_r50_fpn_1x_dota --dest .
@@ -189,6 +189,16 @@ Example:
                     labels=torch.from_numpy(pred_labels)))
         ]
 ```
+
+## Note
+
+===============================================================================================
+
+- Please read this [documentation](https://mmrotate.readthedocs.io/en/latest/intro.html#rotation-direction) if you confuse about angles (it is 5th value in each detection values)
+
+- Make sure `angle` is right format
+
+===============================================================================================
 
 ```bash
 python tools/analysis_tools/confusion_matrix.py \
