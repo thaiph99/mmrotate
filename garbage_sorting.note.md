@@ -73,7 +73,7 @@ rotated_rtmdet_l_3x_v1/epoch_36.pth
 
 ## 1. Train on images1
 
-### 1.1. Evaluation on images1
+### 1.1. Evaluate on images1
 
 2023/08/03 08:46:57
 | class   | gts    | dets   | recall | ap     |
@@ -87,7 +87,7 @@ rotated_rtmdet_l_3x_v1/epoch_36.pth
 | ------  | ------ | ------ | ------ | ------ |
 | mAP     |        |        |        | 0.917  |
 
-### 1.2. Evaluation on images2
+### 1.2. Evaluate on images2
 
 2023/08/03 08:46:57
 | class   | gts    | dets   | recall | ap     |
@@ -103,7 +103,7 @@ rotated_rtmdet_l_3x_v1/epoch_36.pth
 
 ## 2. Train on images2
 
-### 2.1. Evaluation on images2
+### 2.1. Evaluate on images2
 
 2023/08/03 09:33:03
 | class   | gts    | dets   | recall | ap     |
@@ -133,18 +133,14 @@ rotated_rtmdet_l_3x_v1/epoch_36.pth
 
 # Analysis Data
 
+## Evaluate on pickle data
+
 Firstly, create pkl (pickle) format file from prediction results
 pkl file have format:
 
 ```python
 List[Dict[
-    "batch_input_shape": Tuple,
-    "img_id": int,
-    "img_shape": Tuple,
-    "ori_shape": Tuple,
-    "img_path": str,
-    "scale_factor": Tuple,
-    "pad_shape": Tuple,
+    "img_id": str,
     "pred_instances": Dict[
         "bboxes": Tensor[N, 5],
         "score": Tensor[N, 5],
@@ -161,9 +157,41 @@ List[Dict[
 ]]
 ```
 
+Example:
+
+```python
+    def _create_dummy_data_sample(self):
+        bboxes = np.array([[23, 31, 10.0, 20.0, 0.0],
+                           [100, 120, 10.0, 20.0, 0.1],
+                           [150, 160, 10.0, 20.0, 0.2],
+                           [250, 260, 10.0, 20.0, 0.3]])
+        labels = np.array([0] * 4)
+        bboxes_ignore = np.array([[0] * 5])
+        labels_ignore = np.array([0])
+        pred_bboxes = np.array([[23, 31, 10.0, 20.0, 0.0],
+                                [100, 120, 10.0, 20.0, 0.1],
+                                [150, 160, 10.0, 20.0, 0.2],
+                                [250, 260, 10.0, 20.0, 0.3]])
+        pred_scores = np.array([1.0, 0.98, 0.96, 0.95])
+        pred_labels = np.array([0, 0, 0, 0])
+        return [
+            dict(
+                img_id='P2805__1024__0___0',
+                gt_instances=dict(
+                    bboxes=torch.from_numpy(bboxes),
+                    labels=torch.from_numpy(labels)),
+                ignored_instances=dict(
+                    bboxes=torch.from_numpy(bboxes_ignore),
+                    labels=torch.from_numpy(labels_ignore)),
+                pred_instances=dict(
+                    bboxes=torch.from_numpy(pred_bboxes),
+                    scores=torch.from_numpy(pred_scores),
+                    labels=torch.from_numpy(pred_labels)))
+        ]
+```
+
 ```bash
 python tools/analysis_tools/confusion_matrix.py \
-rotated_rtmdet_l_3x_v4_test/rotated_rtmdet_l-3x-dota_ms_custom_v4.py \
 result1.pkl \
 rotated_rtmdet_l_3x_v4_test
 ```
