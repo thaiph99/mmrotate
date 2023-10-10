@@ -92,11 +92,11 @@ class DOTADataset(BaseDataset):
                         instance = {}
                         bbox_info = si.split()
                         instance['bbox'] = [float(i) for i in bbox_info[:8]]
-                        cls_name = bbox_info[8]
-                        class_name = ["paper", "metal", "plastic", "nilon", "glass", "fabric"]
+                        cls_name = bbox_info[8].split('.')[0]
+                        class_name = ["paper", "metal", "plastic", "nilon", "glass", "fabric", "other"]
                         cls_name = class_name[int(cls_name)]
                         instance['bbox_label'] = cls_map[cls_name]
-                        difficulty = int(bbox_info[9])
+                        difficulty = int(bbox_info[9].split('.')[0])
                         if difficulty > self.diff_thr:
                             instance['ignore_flag'] = 1
                         else:
