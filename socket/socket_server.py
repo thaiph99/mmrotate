@@ -1,19 +1,18 @@
-import os
-import socket
-import cv2
-import numpy as np
-import numpy
 import base64
 import glob
-import sys
-import time
-import threading
-from datetime import datetime
 import math
+import os
+import socket
+import sys
+import threading
+import time
+from datetime import datetime
 
-from similari import Universal2DBox, Sort, SpatioTemporalConstraints, PositionalMetricType, BoundingBox
+import cv2
+import numpy as np
 from mmdet.apis import inference_detector, init_detector
-
+from similari import (BoundingBox, PositionalMetricType, Sort,
+                      SpatioTemporalConstraints, Universal2DBox)
 
 config = "../rotated_rtmdet_l_3x_v4/rotated_rtmdet_l-3x-dota_ms_custom_v4.py"
 checkpoint = "../rotated_rtmdet_l_3x_v4/epoch_96.pth"
@@ -199,7 +198,7 @@ class ServerSocket:
                 vision_results.append([xc, yc, width, height, angle,
                                        obj_id, label_id, pred_score])
 
-            text = '{:.2f}*'.format(angle)
+            text = '{:.2f}*'.format(degree)
             # text = f"#{obj_id}"
 
             point_text_orig = pts[0, 0, :] + text_offset
