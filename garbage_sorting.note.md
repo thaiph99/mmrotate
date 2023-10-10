@@ -136,7 +136,7 @@ rotated_rtmdet_l_3x_v1/epoch_36.pth
 ## Evaluate on pickle data
 
 Firstly, create pkl (pickle) format file from prediction results
-pkl file have format:
+pkl file have format ([full version](https://github.com/thaiph99/mmrotate/commit/de881242e065d5ecac83987001ed80849a147b0e)):
 
 ```python
 List[Dict[
