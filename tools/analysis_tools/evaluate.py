@@ -57,15 +57,20 @@ def parse_args():
     return args
 
 
-def create_dummy_results(results: List[dict]) -> List[dict]:
+def get_dummy_results(results: List[dict], conf_thr=0.05) -> List[dict]:
     dummy_results = []
 
     for per_img_res in results:
+        filter_idx = per_img_res['pred_instances']['scores'] > conf_thr
+        predict_filter = dict(
+            bboxes=per_img_res['pred_instances']['bboxes'][filter_idx],
+            labels=per_img_res['pred_instances']['labels'][filter_idx],
+            scores=per_img_res['pred_instances']['scores'][filter_idx])
         dummy_results.append(dict(
             img_id=per_img_res['img_id'],
             gt_instances=per_img_res['gt_instances'],
             ignored_instances=per_img_res['ignored_instances'],
-            pred_instances=per_img_res['pred_instances']))
+            pred_instances=predict_filter))
 
     return dummy_results
 
@@ -86,9 +91,9 @@ def main():
     metric.dataset_meta = {
         'classes': ('paper', 'metal', 'plastic',
                     'nilon', 'glass', 'fabric', 'other')}
-    metric.process({}, create_dummy_results(pkl_res))
-    eva_res = metric.evaluate(size=1)
-    print('evaulation results: ', eva_res)
+    metric.process({}, get_dummy_results(pkl_res, conf_thr=0.05))
+    eva_res = metric.evaluate(len(pkl_res))
+    print('evaluation results: ', eva_res)
 
 
 if __name__ == '__main__':
