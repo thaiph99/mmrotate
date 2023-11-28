@@ -20,7 +20,9 @@ def parse_args():
     parser.add_argument(
         'prediction_path', help='prediction path where test .pkl result')
     parser.add_argument(
-        'save_dir', help='directory where confusion matrix will be saved')
+        '--save_dir',
+        help='directory where confusion matrix will be saved',
+        default='work_dirs')
     parser.add_argument(
         '--show', action='store_true', help='show confusion matrix')
     parser.add_argument(
@@ -84,10 +86,7 @@ def main():
     if not os.path.exists(args.save_dir):
         os.makedirs(args.save_dir)
 
-    print('checking pkl_res len: ', len(pkl_res))
-    print('checking pkl_res first type: ', type(pkl_res[0]))
-
-    metric = DOTAMetric(iou_thrs=[0.1, 0.5])
+    metric = DOTAMetric(iou_thrs=[0.5])
     metric.dataset_meta = {
         'classes': ('paper', 'metal', 'plastic',
                     'nilon', 'glass', 'fabric', 'other')}

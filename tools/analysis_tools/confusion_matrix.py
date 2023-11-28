@@ -133,6 +133,8 @@ def analyze_per_img_dets(confusion_matrix,
     unique_label = np.unique(result['labels'].numpy())
 
     for det_label in unique_label:
+        if not isinstance(det_label, int):
+            det_label = int(det_label)
         mask = (result['labels'] == det_label)
         det_bboxes = result['bboxes'][mask].numpy()
         det_scores = result['scores'][mask].numpy()
